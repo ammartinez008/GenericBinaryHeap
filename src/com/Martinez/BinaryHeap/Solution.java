@@ -16,6 +16,12 @@ public class Solution {
 		 solution.insert(4);
 		 solution.insert(2);
 		 solution.insert(1);
+		 solution.remove();
+		 solution.remove();
+		 solution.remove();
+		 solution.remove();
+		 solution.remove();
+		 solution.remove();
 	}
 
 	// create new heap
@@ -98,17 +104,48 @@ public class Solution {
 			return 0;
 		
 		int head = heap.get(1);
-		int tempHead = heap.get(heap.size() - 1);
-		heap.set(1, tempHead);
-		percolateDown(1);
+		int tempHead = heap.remove(heap.size() - 1);
+		
+		if(heap.size() > 1) {
+			heap.set(1, tempHead);
+			percolateDown(1);
+		}
+		System.out.println("removed " + head + " heap: " + heap.toString());
 		return head;
 	}
 	
 	private void percolateDown(int index) {
 		int leftChild = getLeftChild(index);
 		int rightChild = getRightChild(index);
+
+		//reached the bottom of the heap
+		if(leftChild == 0 && rightChild == 0) {
+			return;
+		}
+		//check if the leftChild is empty
+		else if(leftChild == 0 && rightChild < heap.get(index)) {
+			swap(index, (index*2 + 1));
+			percolateDown((index*2) + 1);
+		}
 		
+		//check if the right child is empty
+		else if(rightChild == 0 && leftChild < heap.get(index)) {
+			swap(index, index*2);
+			percolateDown(index*2);
+		}
+		else {
+			if(leftChild > rightChild) {
+				swap(index, (index*2 + 1));
+				percolateDown((index*2) + 1);
+			}
+			else {
+				swap(index, index*2);
+				percolateDown(index*2);
+			}
+			
+		}
 		
+		return;
 	}
 	
 	private int getLeftChild(int parentIndex) {
@@ -124,6 +161,7 @@ public class Solution {
 		
 		return heap.get((parentIndex * 2) + 1);
 	}
+	
 	
 	//swap the position of two elements in the heap
 	private void swap(int index1, int index2) {
