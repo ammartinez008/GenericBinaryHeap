@@ -2,6 +2,7 @@ package com.Martinez.BinaryHeap;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Solution {
@@ -11,22 +12,104 @@ public class Solution {
 	public static void main(String[] args) throws Exception {
 		s = new Scanner(System.in);
 		Solution solution = new Solution();
-
-		String heapType = s.nextLine();
-		if(heapType.equals("max-heap")) 
-			 solution.initialize(true);
-		else
-			solution.initialize(false);
+		solution.getHeapType(s);
+		//solution.getType(s);
 		
-		 solution.run();
+		 solution.runTests();
 	}
-
+	
+	private void getHeapType(Scanner s) {
+		String heapType = s.nextLine();
+		if(heapType.toLowerCase().equals("max-heap")) 
+			initialize(true);
+		else
+			initialize(false);
+	}
+	
 	// create new heap
 	private void initialize(Boolean isMaxHeap) {
 		heap = new BinaryHeap(isMaxHeap);
 	}
 	
-	private void run() throws IOException {
+	private void getType(Scanner s) throws IOException {
+		if(s.hasNextLong()) {
+			runLong();
+		}
+		if(s.hasNextInt()) {
+			runInt();
+		} 
+		else if(s.hasNextByte()) {
+			runByte();
+		}
+		else if(s.hasNextDouble()) {
+			runDouble();
+		}
+		else if(s.hasNextFloat()) {
+			runFloat();
+		}
+		else if(s.hasNextLine()) {
+			runString();
+		}
+	
+	}
+	
+	private void runLong() throws IOException {
+		long num;
+
+		while(s.hasNextLong()) {
+			num = s.nextLong();
+			heap.insert(num);
+		}
+		
+		while(heap.size() >= 1) {
+			num = (long) heap.remove();
+			System.out.println(num);
+		}
+	}
+	
+	private void runFloat() throws IOException {
+		float num;
+
+		while(s.hasNextFloat()) {
+			num = s.nextFloat();
+			heap.insert(num);
+		}
+		
+		while(heap.size() >= 1) {
+			num = (float) heap.remove();
+			System.out.println(num);
+		}
+	}
+	
+	private void runDouble() throws IOException {
+		double num;
+
+		while(s.hasNextDouble()) {
+			num = s.nextDouble();
+			heap.insert(num);
+		}
+		
+		while(heap.size() >= 1) {
+			num = (double) heap.remove();
+			System.out.println(num);
+		}
+	}
+	
+	private void runByte() throws IOException {
+		Byte num;
+
+		while(s.hasNextByte()) {
+			num = s.nextByte();
+			heap.insert(num);
+		}
+		
+		while(heap.size() >= 1) {
+			num = (Byte) heap.remove();
+			System.out.println(num.toString());
+		}
+	}
+	
+	private void runInt() throws IOException {
 		int num;
 
 		while(s.hasNextInt()) {
@@ -34,27 +117,58 @@ public class Solution {
 			heap.insert(num);
 		}
 		
-		while(heap.size() > 1) {
+		while(heap.size() >= 1) {
+			num = (int) heap.remove();
+			System.out.println(num);
+		}
+	}
+	
+	private void runString() throws IOException {
+		Comparable num;
+
+		while(s.hasNext()) {
+			num = s.nextLine();
+			heap.insert(num);
+		}
+		
+		while(heap.size() >= 1) {
 			num = heap.remove();
 			System.out.println(num);
 		}
 	}
-
+	
+	private void runTests() {
+		Random rand = new Random();
+		int[] data = {84, 72, 66 ,66, 24, 66, 58, 66};
+		
+		for(int i = 0; i < 7; i ++) {
+			int num = data[i];
+			heap.insert(num);
+		}
+		System.out.println(heap.heap.toString());
+		
+		
+		while(heap.size() >= 1) {
+			int num = (int) heap.remove();
+			System.out.println(num);
+		}
+		
+	}
 	
 	/*******************
 	 * Not sure if its possible to send multiple classes
 	 * in hackerrank, so i created an inner classes
 	 *
 	 **********************/
-	public class BinaryHeap {
+	public class BinaryHeap<T extends Comparable<T>>{
 
 		// creates a min-heap
-		private ArrayList<Integer> heap;
+		private ArrayList<T> heap;
 		private Boolean isMaxHeap;
 		
 		public BinaryHeap(Boolean isMaxHeap) {
-			this.heap = new ArrayList<Integer>();
-			this.heap.add(0);
+			this.heap = new ArrayList<T>();
+			this.heap.add(null);
 			this.isMaxHeap = isMaxHeap;
 		}
 		
@@ -68,13 +182,17 @@ public class Solution {
 	
 		// returns root element
 		// does not remove the element
-		private int peek() {
+		private T peek() {
 			if(heap == null)
-				return 0;
+				return null;
+			
 			return heap.get(1);
 		}
 		
-		private void insert(int element) {
+		private void insert(T element) {
+			if(element == null)
+				return;
+			
 			heap.add(element);
 			if(size() == 0) 
 				return;			
@@ -82,26 +200,25 @@ public class Solution {
 			//place element at the end of heap
 			// find proper spot and insert
 			percolateUp(heap.size() - 1, element);
-			System.out.println("Heap after insert: " + heap.toString());
 		}
 		
 	
 		//properly places element in the heap
-		private void percolateUp(int childIndex, int element) {
-			int parent = getParent(childIndex);
+		private void percolateUp(int childIndex, T element) {
+			T parent = getParent(childIndex);
 			int parentIndex = getParentIndex(childIndex);
 			
 			//check if at root of heap
-			if(parentIndex == 0) {
+			if(parentIndex == 0 || parent == null) {
 				return;
 			}
 			
-			if(isMaxHeap && element > parent) {
+			if(isMaxHeap && element.compareTo(parent) > 0) {
 				heap.set(parentIndex, element);
 				heap.set(childIndex, parent);
 				percolateUp(parentIndex, element);
 			}
-			else if(!isMaxHeap && element < parent) {
+			else if(!isMaxHeap && element.compareTo(parent) < 0) {
 				heap.set(parentIndex, element);
 				heap.set(childIndex, parent);
 				percolateUp(parentIndex, element);
@@ -116,121 +233,143 @@ public class Solution {
 			return parentIndex;
 		}
 		
-		private int getParent(int currentIndex) {
+		private T getParent(int currentIndex) {
 			int parentIndex = getParentIndex(currentIndex);
 			
 			if(parentIndex < 1) {
-				return 0;
+				return null;
 			}
 			
 			return heap.get(parentIndex);
 		}
 		
 		//removes and returns root element
-		private int remove() {
-			if(heap.size() <= 1)
-				return 0;
+		private T remove() {
+			if(heap.size() < 1)
+				return null;
 			
-			int head = heap.get(1);
-			int tempHead = heap.remove(heap.size() - 1);
+			T head = heap.get(1);
+			T tempHead = heap.remove(heap.size() - 1);
 			
 			if(heap.size() > 1) {
 				heap.set(1, tempHead);
 				percolateDown(1);
 			}
-			System.out.println("removed " + head + " heap: " + heap.toString());
+			
 			return head;
 		}
 		
 		private void percolateDown(int index) {
 			if(isMaxHeap)
-				percolateDownMax(index);
+				percolateD(index);
 			else
 				percolateDownMin(index);
 		}
 		
-		private void percolateDownMax(int index) {
-			int leftChild = getLeftChild(index);
-			int rightChild = getRightChild(index);
-			
-			//reached the bottom of the heap
-			if(leftChild == 0 && rightChild == 0) {
-				return;
-			}
-			//check if the leftChild is empty
-			else if(leftChild == 0 && rightChild > heap.get(index)) {
-				swap(index, (index*2 + 1));
-				percolateDownMax((index*2) + 1);
-			}
-			
-			//check if the right child is empty
-			else if(rightChild == 0 && leftChild > heap.get(index)) {
-				swap(index, index*2);
-				percolateDownMax(index*2);
-			}
-			else {
-				if(leftChild < rightChild) {
-					swap(index, (index*2 + 1));
-					percolateDownMax((index*2) + 1);
+		
+		private void percolateD(int index) {
+
+			while(true) {
+				T leftChild = getLeftChild(index);
+				T rightChild = getRightChild(index);
+				
+				//reached the bottom of the heap
+				if(leftChild == null && rightChild == null) {
+					return;
 				}
-				else {
+				
+				if(leftChild == null){
+					if(rightChild.compareTo(heap.get(index)) > 0){
+						swap(index, (index *2) + 1);
+					}
+					else
+						return;
+				}
+				else if(rightChild == null) {
+					if(leftChild.compareTo(heap.get(index)) > 0) {
+						swap(index, (index *2));
+					}
+					else 
+						return;
+				}
+							
+				else if(leftChild.compareTo(rightChild) > 0 && leftChild.compareTo(heap.get(index)) > 0) {
 					swap(index, index*2);
-					percolateDownMax(index*2);
+					index *= 2;
 				}
+				else if(leftChild.compareTo(rightChild) < 0 && rightChild.compareTo(heap.get(index)) > 0){
+					swap(index, index*2 +1);
+					index = (index * 2) + 1;
+				}
+				else if(leftChild.compareTo(rightChild) == 0 && leftChild.compareTo(heap.get(index)) > 0) {
+					swap(index, index*2);
+					index *= 2;
+				}
+				else
+					return;
 			}
-			
 		}
 		
 		private void percolateDownMin(int index) {
-			int leftChild = getLeftChild(index);
-			int rightChild = getRightChild(index);
-			
-			//reached the bottom of the heap
-			if(leftChild == 0 && rightChild == 0) {
-				return;
-			}
-			//check if the leftChild is empty
-			else if(leftChild == 0 && rightChild < heap.get(index)) {
-				swap(index, (index*2 + 1));
-				percolateDownMin((index*2) + 1);
-			}
-			
-			//check if the right child is empty
-			else if(rightChild == 0 && leftChild < heap.get(index)) {
-				swap(index, index*2);
-				percolateDownMin(index*2);
-			}
-			else {
-				if(leftChild > rightChild) {
-					swap(index, (index*2 + 1));
-					percolateDownMin((index*2) + 1);
-				}
-				else {
-					swap(index, index*2);
-					percolateDownMin(index*2);
+			while(true) {
+				T leftChild = getLeftChild(index);
+				T rightChild = getRightChild(index);
+				
+				//reached the bottom of the heap
+				if(leftChild == null && rightChild == null) {
+					return;
 				}
 				
+				if(leftChild == null){
+					if(rightChild.compareTo(heap.get(index)) < 0){
+						swap(index, (index *2) + 1);
+					}
+					else
+						return;
+				}
+				else if(rightChild == null) {
+					if(leftChild.compareTo(heap.get(index)) < 0) {
+						swap(index, (index *2));
+					}
+					else 
+						return;
+				}
+							
+				else if(leftChild.compareTo(rightChild) < 0 && leftChild.compareTo(heap.get(index)) < 0) {
+					swap(index, index*2);
+					index *= 2;
+				}
+				else if(leftChild.compareTo(rightChild) > 0 && rightChild.compareTo(heap.get(index)) < 0){
+					swap(index, index*2 +1);
+					index = (index * 2) + 1;
+				}
+				else if(leftChild.compareTo(rightChild) == 0 && leftChild.compareTo(heap.get(index)) < 0) {
+					swap(index, index*2);
+					index *= 2;
+				}
+				else
+					return;
 			}
 		}
 		
-		private int getLeftChild(int parentIndex) {
-			if(parentIndex * 2 >= size())
-				return 0;
-			
+		private T getLeftChild(int parentIndex) {
+			if(parentIndex * 2 > size()) {
+				return null;
+			}
 			return heap.get(parentIndex * 2);
 		}
 		
-		private int getRightChild(int parentIndex) {
-			if((parentIndex * 2) + 1 >= size())
-				return 0;
-			
+		private T getRightChild(int parentIndex) {
+			if((parentIndex * 2) + 1 > size()) {
+				return null;
+			}
 			return heap.get((parentIndex * 2) + 1);
 		}
 		
 		
 		//swap the position of two elements in the heap
 		private void swap(int index1, int index2) {
-			int holder = heap.get(index1);
+			T holder = heap.get(index1);
 			
 			heap.set(index1, heap.get(index2));
 			heap.set(index2, holder);
