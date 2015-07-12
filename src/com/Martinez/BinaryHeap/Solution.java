@@ -7,30 +7,46 @@ import java.util.Scanner;
 
 public class Solution {
 	public static BinaryHeap heap;
-	public static Scanner s;
+	public static Scanner scanner;
 	
 	public static void main(String[] args) throws Exception {
-		s = new Scanner(System.in);
+		//initialize scanner to read in from stdin
+		scanner = new Scanner(System.in);
+		//run heap
 		Solution solution = new Solution();
-		solution.getHeapType(s);
-		//solution.getType(s);
-		
-		 solution.runTests();
+		solution.getHeapType(scanner);
+		solution.getType(scanner);
 	}
 	
-	private void getHeapType(Scanner s) {
-		String heapType = s.nextLine();
+	/*****************************************
+	 *  reads first line from stdin
+	 *  determines if it is a max or min heap
+	 * @param scanner - scanner from stdin
+	 ******************************************/
+	private void getHeapType(Scanner scanner) {
+		String heapType = scanner.nextLine();
 		if(heapType.toLowerCase().equals("max-heap")) 
 			initialize(true);
 		else
 			initialize(false);
 	}
 	
-	// create new heap
+	/**********************************************
+	 * creates a new heap
+	 * @param isMaxHeap - boolean passed to
+	 * 	constructor to determine if its a max-heap
+	 **********************************************/
 	private void initialize(Boolean isMaxHeap) {
 		heap = new BinaryHeap(isMaxHeap);
 	}
 	
+	/********************************************
+	 * peek first line of stdin
+	 * determine what type of comparable we are dealing with
+	 * read the following lines and build heap accordingly 
+	 * @param s
+	 * @throws IOException
+	 ********************************************/
 	private void getType(Scanner s) throws IOException {
 		if(s.hasNextLong()) {
 			runLong();
@@ -53,11 +69,15 @@ public class Solution {
 	
 	}
 	
+	/*******************************
+	 * build heap with long values
+	 * @throws IOException
+	 ******************************/
 	private void runLong() throws IOException {
 		long num;
 
-		while(s.hasNextLong()) {
-			num = s.nextLong();
+		while(scanner.hasNextLong()) {
+			num = scanner.nextLong();
 			heap.insert(num);
 		}
 		
@@ -67,11 +87,15 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * build heap with float values
+	 * @throws IOException
+	 ******************************/
 	private void runFloat() throws IOException {
 		float num;
 
-		while(s.hasNextFloat()) {
-			num = s.nextFloat();
+		while(scanner.hasNextFloat()) {
+			num = scanner.nextFloat();
 			heap.insert(num);
 		}
 		
@@ -81,11 +105,15 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * build heap with double values
+	 * @throws IOException
+	 ******************************/
 	private void runDouble() throws IOException {
 		double num;
 
-		while(s.hasNextDouble()) {
-			num = s.nextDouble();
+		while(scanner.hasNextDouble()) {
+			num = scanner.nextDouble();
 			heap.insert(num);
 		}
 		
@@ -95,11 +123,15 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * build heap with Byte values
+	 * @throws IOException
+	 ******************************/
 	private void runByte() throws IOException {
 		Byte num;
 
-		while(s.hasNextByte()) {
-			num = s.nextByte();
+		while(scanner.hasNextByte()) {
+			num = scanner.nextByte();
 			heap.insert(num);
 		}
 		
@@ -109,11 +141,15 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * build heap with int values
+	 * @throws IOException
+	 ******************************/
 	private void runInt() throws IOException {
 		int num;
 
-		while(s.hasNextInt()) {
-			num = s.nextInt();
+		while(scanner.hasNextInt()) {
+			num = scanner.nextInt();
 			heap.insert(num);
 		}
 		
@@ -123,11 +159,15 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * build heap with String values
+	 * @throws IOException
+	 ******************************/
 	private void runString() throws IOException {
 		Comparable num;
 
-		while(s.hasNext()) {
-			num = s.nextLine();
+		while(scanner.hasNext()) {
+			num = scanner.nextLine();
 			heap.insert(num);
 		}
 		
@@ -137,6 +177,10 @@ public class Solution {
 		}
 	}
 	
+	/*******************************
+	 * used for debugging
+	 * @throws IOException
+	 ******************************/
 	private void runTests() {
 		Random rand = new Random();
 		int[] data = {84, 72, 66 ,66, 24, 66, 58, 66};
@@ -158,14 +202,15 @@ public class Solution {
 	/*******************
 	 * Not sure if its possible to send multiple classes
 	 * in hackerrank, so i created an inner classes
-	 *
+	 * BinaryHeap can take in any Comparable obj
 	 **********************/
 	public class BinaryHeap<T extends Comparable<T>>{
 
-		// creates a min-heap
+		// instance variables
 		private ArrayList<T> heap;
 		private Boolean isMaxHeap;
 		
+		//constructor
 		public BinaryHeap(Boolean isMaxHeap) {
 			this.heap = new ArrayList<T>();
 			this.heap.add(null);
@@ -179,9 +224,12 @@ public class Solution {
 			
 			return heap.size() - 1;
 		}
-	
-		// returns root element
-		// does not remove the element
+		
+		/*********************************
+		 * returns root element
+		 * does not remove the element
+		 * @return - root element
+		 *********************************/
 		private T peek() {
 			if(heap == null)
 				return null;
@@ -189,6 +237,12 @@ public class Solution {
 			return heap.get(1);
 		}
 		
+		/**********************************
+		 * inserts element at end of heap
+		 * percolates up to find appropriate 
+		 * spot in heap
+		 * @param element - element to be inserted
+		 ***********************************/
 		private void insert(T element) {
 			if(element == null)
 				return;
@@ -203,7 +257,11 @@ public class Solution {
 		}
 		
 	
-		//properly places element in the heap
+		/****************************************
+		 * places inserted element in proper place
+		 * @param childIndex - current index of element
+		 * @param element - element value
+		 ******************************************/
 		private void percolateUp(int childIndex, T element) {
 			T parent = getParent(childIndex);
 			int parentIndex = getParentIndex(childIndex);
@@ -213,11 +271,13 @@ public class Solution {
 				return;
 			}
 			
+			// check if we should move up a level for max heap
 			if(isMaxHeap && element.compareTo(parent) > 0) {
 				heap.set(parentIndex, element);
 				heap.set(childIndex, parent);
 				percolateUp(parentIndex, element);
 			}
+			//check if we should move up a level for min heap
 			else if(!isMaxHeap && element.compareTo(parent) < 0) {
 				heap.set(parentIndex, element);
 				heap.set(childIndex, parent);
@@ -225,6 +285,11 @@ public class Solution {
 			}
 		}
 		
+		/***************************************
+		 * gets parent index
+		 * @param childIndex - index where child is located
+		 * @return int value of parent index
+		 *****************************************/
 		private int getParentIndex(int childIndex) {
 			int parentIndex = childIndex / 2;
 			if(parentIndex < 1) 
@@ -233,6 +298,11 @@ public class Solution {
 			return parentIndex;
 		}
 		
+		/********************************
+		 * get parent value
+		 * @param currentIndex - child index
+		 * @return parent value
+		 *********************************/
 		private T getParent(int currentIndex) {
 			int parentIndex = getParentIndex(currentIndex);
 			
@@ -243,7 +313,12 @@ public class Solution {
 			return heap.get(parentIndex);
 		}
 		
-		//removes and returns root element
+		/***********************************
+		 * removes root element
+		 * fixes tree order by percolating down
+		 * 
+		 * @return - root element
+		 *************************************/
 		private T remove() {
 			if(heap.size() < 1)
 				return null;
@@ -259,15 +334,26 @@ public class Solution {
 			return head;
 		}
 		
+		/*************************************
+		 * calls appropriate percolate down
+		 * depending on if heap is max or min
+		 * @param index - current level of node 
+		 * to be adjusted
+		 **************************************/
 		private void percolateDown(int index) {
 			if(isMaxHeap)
-				percolateD(index);
+				percolateDownMax(index);
 			else
 				percolateDownMin(index);
 		}
 		
-		
-		private void percolateD(int index) {
+		/*************************************
+		 * - percolate down for max heap
+		 * adjusts heap after a remove call
+		 * temporary root element gets sent down
+		 * to appropriate level
+		 ***************************************/
+		private void percolateDownMax(int index) {
 
 			while(true) {
 				T leftChild = getLeftChild(index);
@@ -278,6 +364,8 @@ public class Solution {
 					return;
 				}
 				
+				//dont think this is ever possible
+				//but check if we only have a right child
 				if(leftChild == null){
 					if(rightChild.compareTo(heap.get(index)) > 0){
 						swap(index, (index *2) + 1);
@@ -285,6 +373,8 @@ public class Solution {
 					else
 						return;
 				}
+				
+				//check if we only have a left child
 				else if(rightChild == null) {
 					if(leftChild.compareTo(heap.get(index)) > 0) {
 						swap(index, (index *2));
@@ -292,7 +382,7 @@ public class Solution {
 					else 
 						return;
 				}
-							
+				//we have two children, compare them and adjust
 				else if(leftChild.compareTo(rightChild) > 0 && leftChild.compareTo(heap.get(index)) > 0) {
 					swap(index, index*2);
 					index *= 2;
@@ -301,15 +391,23 @@ public class Solution {
 					swap(index, index*2 +1);
 					index = (index * 2) + 1;
 				}
+				//both children are equal, just move up one and adjust 
 				else if(leftChild.compareTo(rightChild) == 0 && leftChild.compareTo(heap.get(index)) > 0) {
 					swap(index, index*2);
 					index *= 2;
 				}
+				// return, we have reached the appropriate level for element
 				else
 					return;
 			}
 		}
 		
+		/*************************************
+		 * - percolate down for min heap
+		 * adjusts heap after a remove call
+		 * temporary root element gets sent down
+		 * to appropriate level
+		 ***************************************/
 		private void percolateDownMin(int index) {
 			while(true) {
 				T leftChild = getLeftChild(index);
@@ -320,6 +418,8 @@ public class Solution {
 					return;
 				}
 				
+				//check if we only have a right child
+				// dont think this is possible
 				if(leftChild == null){
 					if(rightChild.compareTo(heap.get(index)) < 0){
 						swap(index, (index *2) + 1);
@@ -327,6 +427,8 @@ public class Solution {
 					else
 						return;
 				}
+				
+				//check if we only have a left child
 				else if(rightChild == null) {
 					if(leftChild.compareTo(heap.get(index)) < 0) {
 						swap(index, (index *2));
@@ -334,7 +436,8 @@ public class Solution {
 					else 
 						return;
 				}
-							
+				
+				// we have two children, so we compare them both and see which one to move up
 				else if(leftChild.compareTo(rightChild) < 0 && leftChild.compareTo(heap.get(index)) < 0) {
 					swap(index, index*2);
 					index *= 2;
@@ -343,15 +446,18 @@ public class Solution {
 					swap(index, index*2 +1);
 					index = (index * 2) + 1;
 				}
+				// both children are equal, just move one (left child) and percolate down
 				else if(leftChild.compareTo(rightChild) == 0 && leftChild.compareTo(heap.get(index)) < 0) {
 					swap(index, index*2);
 					index *= 2;
 				}
+				//return, we have reached the appropriate level for node
 				else
 					return;
 			}
 		}
 		
+		//gets left child of current node
 		private T getLeftChild(int parentIndex) {
 			if(parentIndex * 2 > size()) {
 				return null;
@@ -359,6 +465,7 @@ public class Solution {
 			return heap.get(parentIndex * 2);
 		}
 		
+		//gets right child of current node
 		private T getRightChild(int parentIndex) {
 			if((parentIndex * 2) + 1 > size()) {
 				return null;
