@@ -15,7 +15,8 @@ public class Solution {
 		//run heap
 		Solution solution = new Solution();
 		solution.getHeapType(scanner);
-		solution.getType(scanner);
+		//solution.getType(scanner);
+		solution.runTests();
 	}
 	
 	/*****************************************
@@ -185,8 +186,8 @@ public class Solution {
 		Random rand = new Random();
 		int[] data = {84, 72, 66 ,66, 24, 66, 58, 66};
 		
-		for(int i = 0; i < 7; i ++) {
-			int num = data[i];
+		for(int i = 0; i < 30; i ++) {
+			int num = rand.nextInt(100 - 1) + 1;
 			heap.insert(num);
 		}
 		System.out.println(heap.heap.toString());
@@ -263,26 +264,35 @@ public class Solution {
 		 * @param element - element value
 		 ******************************************/
 		private void percolateUp(int childIndex, T element) {
-			T parent = getParent(childIndex);
-			int parentIndex = getParentIndex(childIndex);
+			T parent;
+			int parentIndex;
 			
-			//check if at root of heap
-			if(parentIndex == 0 || parent == null) {
-				return;
+			while(true) {
+				parent = getParent(childIndex);
+				parentIndex = getParentIndex(childIndex);
+				
+				//check if at root of heap
+				if(parentIndex == 0 || parent == null) {
+					return;
+				}
+				
+				// check if we should move up a level for max heap
+				if(isMaxHeap && element.compareTo(parent) > 0) {
+					heap.set(parentIndex, element);
+					heap.set(childIndex, parent);
+					childIndex = parentIndex;
+				}
+				
+				//check if we should move up a level for min heap
+				else if(!isMaxHeap && element.compareTo(parent) < 0) {
+					heap.set(parentIndex, element);
+					heap.set(childIndex, parent);
+					childIndex = parentIndex;
+				}
+				else 
+					return;
 			}
-			
-			// check if we should move up a level for max heap
-			if(isMaxHeap && element.compareTo(parent) > 0) {
-				heap.set(parentIndex, element);
-				heap.set(childIndex, parent);
-				percolateUp(parentIndex, element);
-			}
-			//check if we should move up a level for min heap
-			else if(!isMaxHeap && element.compareTo(parent) < 0) {
-				heap.set(parentIndex, element);
-				heap.set(childIndex, parent);
-				percolateUp(parentIndex, element);
-			}
+
 		}
 		
 		/***************************************
