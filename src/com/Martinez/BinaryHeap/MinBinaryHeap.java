@@ -170,7 +170,7 @@ public class MinBinaryHeap<T extends Comparable<T>> implements Heap<T> {
             // dont think this is possible
             if(leftChild == null){
                 if(rightChild.compareTo(heap.get(index)) < 0){
-                    swap(index, (index *2) + 1);
+                    swap(index, (index * 2) + 1);
                 }
                 else
                     return;
